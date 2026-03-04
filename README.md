@@ -254,4 +254,4 @@ the `Dockerfile`. A commented-out line with all available packs is provided ther
 This image and source code is made available under the MIT licence. See the LICENSE file for
 details.
 
-osTicket itself is licensed under the [GNU General Public License v2.0](https://github.com/osTicket/osTicket/blob/develop/LICENSE.md).
+osTicket itself is licensed under the [GNU General Public License v2.0](https://github.com/osTicket/osTicket/blob/develop/LICENSE.txt).
