@@ -4,29 +4,22 @@ osticket-docker
 Special Build
 =============
 
-This was based on  (now archived) with following changes:
-
-* Bumped version to osTicket v1.18.3.
-* Added `Dockerfile.debug` for building a debug version which enables php xdebug and extended logging.
-* Patched `class.mailer.php` to BCC the sender's own From address on all outgoing mails, so sent mail can be archived via a server-side mail filter. Enable by setting `MAIL_BCC_TO_SENDER_ENABLED=1`.
-* Patched `mysqli.php` to use `utf8mb4` instead of `utf8` for the database connection, so emojis are stored correctly. This is an upstream bug ([osTicket#1475](https://github.com/osTicket/osTicket/issues/1475)) that will not be fixed before osTicket 2.0.
-* On every container start, `install.php` automatically migrates the MySQL user to `caching_sha2_password` (required by MySQL 8.0+) and converts all database tables to `utf8mb4` if not already done.
 
 # Introduction
 
-Docker image for running version 1.18.3 of [osTicket](http://osticket.com/).
+Docker image for running [osTicket](http://osticket.com/).
 
-This image is based on the works of [CampbellSoftwareSolutions](https://github.com/CampbellSoftwareSolutions/docker-osticket) and Petter A. Helset
+This image is based on the works of [CampbellSoftwareSolutions](https://github.com/CampbellSoftwareSolutions/docker-osticket) and Petter A. Helset.
 
 It has a few modifications:
 
-  * Documentation added, hurray!
-  * Base OS image fixed to Alpine Linux
-  * AJAX issues fixed that made original image unusable
-  * Now designed to work with a linked [MySQL](https://registry.hub.docker.com/u/library/mysql/)
-    docker container.
+  * Bumped version to osTicket v1.18.3.
   * Automates configuration file & database installation
   * EMail support
+  * Added `Dockerfile.debug` for building a debug version which enables php xdebug and extended logging.
+  * Patched `class.mailer.php` to BCC the sender's own From address on all outgoing mails, so sent mail can be archived via a server-side mail filter. Enable by setting `MAIL_BCC_TO_SENDER_ENABLED=1`.
+  * Patched `mysqli.php` to use `utf8mb4` instead of `utf8` for the database connection, so emojis are stored correctly. This is an upstream bug ([osTicket#1475](https://github.com/osTicket/osTicket/issues/1475)) that will not be fixed before osTicket 2.0.
+  * On every container start, `install.php` automatically migrates the MySQL user to `caching_sha2_password` (required by MySQL 8.0+) and converts all database tables to `utf8mb4` if not already done.
 
 osTicket is being served by [nginx](http://wiki.nginx.org/Main) using
 [PHP-FPM](http://php-fpm.org/) with PHP 8.4.
