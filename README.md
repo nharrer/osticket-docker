@@ -28,26 +28,49 @@ PHP [mail](http://php.net/manual/en/function.mail.php) function is configured to
 
 # Quick Start
 
-Ensure you have a MySQL 8.0 or newer container running that osTicket can use to store its data.
+Create a `docker-compose.yml` file:
 
-```bash
-docker run -d \
-    -e MYSQL_ROOT_PASSWORD=secret \
-    -e MYSQL_USER=osticket \
-    -e MYSQL_PASSWORD=secret \
-    -e MYSQL_DATABASE=osticket \
-    --name osticket_mysql\
-    mysql:8.4
+```yaml
+services:
+  osticket:
+    image: nharrer/osticket
+    restart: unless-stopped
+    ports:
+      - "8200:80"
+    environment:
+      MYSQL_HOST: mysql
+      MYSQL_DATABASE: osticket
+      MYSQL_USER: osticket
+      MYSQL_PASSWORD: secret
+      MYSQL_ROOT_PASSWORD: secret
+      INSTALL_URL: http://localhost:8200/
+    volumes:
+      - ./data/osticket_plugins:/data/upload/include/plugins
+      - ./data/osticket_i18n:/data/upload/include/i18n
+      - ./data/osticket_nginx:/var/log/nginx
+    depends_on:
+      - mysql
+
+  mysql:
+    image: mysql:8.4
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: secret
+      MYSQL_DATABASE: osticket
+      MYSQL_USER: osticket
+      MYSQL_PASSWORD: secret
+    volumes:
+      - ./data/osticket_db:/var/lib/mysql
 ```
 
-Now run this image and link the MySQL container.
+Then start it:
 
 ```bash
-docker run -d --name osticket --link osticket_mysql:mysql -p 8080:80 nharrer/osticket
+docker compose up -d
 ```
 
 Wait for the installation to complete then browse to your osTicket staff control panel at
-`http://localhost:8080/scp/`. Login with default admin user & password:
+`http://localhost:8200/scp/`. Login with default admin user & password:
 
 * username: **ostadmin**
 * password: **Admin1**
@@ -55,29 +78,14 @@ Wait for the installation to complete then browse to your osTicket staff control
 Now configure as required. If you are intending on using this image in production, please make sure
 you change the passwords above and read the rest of this documentation!
 
-Note (1): If you want to change the environmental database variables on the osTicket image to run,
-you can do it as follows.
-
-```bash
-docker run -d \
-    -e MYSQL_ROOT_PASSWORD=new_root_password \
-    -e MYSQL_USER=new_root_user \
-    -e MYSQL_PASSWORD=new_secret \
-    -e MYSQL_DATABASE=osticket \
-    --link osticket_mysql:mysql \
-     --name osticket\
-     -p 8080:80 \
-     nharrer/osticket
-```
-
-Note (2): osTicket automatically redirects `http://localhost:8080/scp` to `http://localhost/scp/`.
+Note: osTicket automatically redirects `http://localhost:8200/scp` to `http://localhost/scp/`.
 Either serve this on port 80 or don't omit the trailing slash after `scp/`!
 
 # MySQL connection
 
-The recommended connection method is to link your MySQL container to this image with the alias name
-`mysql`. However, if you are using an external MySQL server then you can specify the connection
-details using environmental variables.
+The recommended connection method is to run MySQL as a service in the same Compose project and set
+`MYSQL_HOST` to the service name (e.g. `mysql`). If you are using an external MySQL server, set
+`MYSQL_HOST` to its hostname or IP address.
 
 osTicket requires that the MySQL connection specifies a user with full permissions to the specified
 database. This is required for the automatic database installation.
@@ -86,25 +94,16 @@ The osTicket configuration file is re-created from the template every time the c
 started. This ensures the MySQL connection details are always kept up to date automatically in case
 of any changes.
 
-## Linked container Settings
-
-There are no mandatory settings required when you link your MySQL container with the alias `mysql`
-as per the quick start example.
-
-## External MySQL connection settings
-
-The following environmental variables should be set when connecting to an external MySQL server.
+## MySQL connection settings
 
 `MYSQL_HOST`
 
-The host name or IP address of the MySQL host to connect to. This is not required when you link a
-container with the alias `mysql`. This must be provided if not using a linked container.
+The host name or IP address of the MySQL server to connect to. Set this to the Compose service name
+(e.g. `mysql`) when running MySQL as a sibling container, or to an external hostname/IP otherwise.
 
 `MYSQL_PASSWORD`
 
-The password for the specified user used when connecting to the MySQL server. By default will use
-the environmental variable `MYSQL_PASSWORD` from the linked MySQL container if this is not
-explicitly specified. This must be provided if not using a linked container.
+The password for the specified user used when connecting to the MySQL server. Must be provided.
 
 `MYSQL_PREFIX`
 
@@ -208,7 +207,7 @@ installation. Defaults to 'helpdesk@example.com'
 
 The full URL of the osTicket installation that will be set in the DB during installation.
 This should be set to match the public facing URL of your osTicket site.
-For example: `https://help.example.com/osticket`. Defaults to `http://localhost:8080/`.
+For example: `https://help.example.com/osticket`. Defaults to `http://localhost:8200/`.
 
 This has no effect if the database has already been installed. In this case, you should change the
 Helpdesk URL in *System Settings and Preferences* in the admin control panel.
@@ -248,9 +247,6 @@ Password to use for automatically created administrative user. Defaults to 'Admi
 osTicket ships with English (`en`) built in. This image additionally bundles the German (`de`)
 language pack. To change which language packs are included, edit the `for lang in ...` loop in
 the `Dockerfile` — a commented-out line with all available packs is provided there for reference.
-
-Note: language packs are downloaded from the official osTicket CDN on S3, but cannot be
-authenticated (see [osTicket#6377](https://github.com/osTicket/osTicket/issues/6377)).
 
 # Modifications
 

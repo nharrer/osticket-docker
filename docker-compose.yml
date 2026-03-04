@@ -1,19 +1,30 @@
-version: '3'
 services:
   osticket:
-    image: nharrer/osticket:latest
+    image: nharrer/osticket:1.18.3
+    restart: unless-stopped
+    ports:
+      - "8200:80"
     environment:
       MYSQL_HOST: mysql
       MYSQL_DATABASE: osticket
       MYSQL_USER: osticket
       MYSQL_PASSWORD: secret
-    ports:
-      - 8080:80
-    restart: on-failure
+      MYSQL_ROOT_PASSWORD: secret
+      INSTALL_URL: http://localhost:8200/
+    volumes:
+      - ./data/osticket_plugins:/data/upload/include/plugins
+      - ./data/osticket_i18n:/data/upload/include/i18n
+      - ./data/osticket_nginx:/var/log/nginx
+    depends_on:
+      - mysql
+
   mysql:
     image: mysql:8.4
+    restart: unless-stopped
     environment:
       MYSQL_ROOT_PASSWORD: secret
       MYSQL_DATABASE: osticket
       MYSQL_USER: osticket
       MYSQL_PASSWORD: secret
+    volumes:
+      - ./data/osticket_db:/var/lib/mysql
