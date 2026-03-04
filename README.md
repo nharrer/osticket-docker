@@ -33,7 +33,7 @@ PHP [mail](http://php.net/manual/en/function.mail.php) function is configured to
 
 # Quick Start
 
-Ensure you have a MySQL 5 container running that osTicket can use to store its data.
+Ensure you have a MySQL 8.0 or newer container running that osTicket can use to store its data.
 
 ```bash
 docker run -d \

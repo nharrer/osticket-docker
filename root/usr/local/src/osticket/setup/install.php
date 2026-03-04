@@ -137,6 +137,26 @@ if ($t >= CONNECTION_TIMEOUT_SEC) {
   err("Timed out waiting for database TCP connection");
 }
 
+// Switch the MySQL user to caching_sha2_password to avoid deprecation warnings from mysql_native_password.
+// The Docker entrypoint creates the user with mysql_native_password; we correct it here on every start.
+$root_pass = getenv("MYSQL_ROOT_PASSWORD");
+if ($root_pass) {
+  $root = @mysqli_connect($vars['dbhost'], 'root', $root_pass);
+  if ($root) {
+    $dbuser    = mysqli_real_escape_string($root, $vars['dbuser']);
+    $dbpass    = mysqli_real_escape_string($root, $vars['dbpass']);
+    $root_pass_esc = mysqli_real_escape_string($root, $root_pass);
+    mysqli_query($root, "ALTER USER IF EXISTS '{$dbuser}'@'%' IDENTIFIED WITH caching_sha2_password BY '{$dbpass}'");
+    mysqli_query($root, "ALTER USER IF EXISTS 'root'@'%' IDENTIFIED WITH caching_sha2_password BY '{$root_pass_esc}'");
+    mysqli_query($root, "ALTER USER IF EXISTS 'root'@'localhost' IDENTIFIED WITH caching_sha2_password BY '{$root_pass_esc}'");
+    mysqli_query($root, "FLUSH PRIVILEGES");
+    mysqli_close($root);
+    echo "Switched MySQL users to caching_sha2_password\n";
+  } else {
+    echo "Warning: Could not connect as root to update auth plugin (non-fatal)\n";
+  }
+}
+
 //Check database installation status
 $db_installed = false;
 echo "Connecting to database mysql://${vars['dbuser']}@${vars['dbhost']}/${vars['dbname']}\n";
