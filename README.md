@@ -8,7 +8,7 @@ This was based on  (now archived) with following changes:
 
 * Bumped version to osTicket v1.18.1.
 * Added `Dockerfile.debug` for building a debug version which enables php xdebug and extended logging.
-* Patched `class.mailer.php` to add a BCC mail header to all outgoing mails.
+* Patched `class.mailer.php` to BCC the sender's own From address on all outgoing mails, so sent mail can be archived via a server-side mail filter. Enable by setting `MAIL_BCC_TO_SENDER_ENABLED=1`.
 
 # Introduction
 

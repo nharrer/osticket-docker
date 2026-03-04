@@ -493,9 +493,11 @@ class Mailer {
             }
         }
 
-        // NH: Adding Bcc to myself. This works in concert with a mailfilter on 
+        // NH: Adding Bcc to myself. This works in concert with a mailfilter on
         // stargate, which moves mails from ostickt to the Sent folder.
-        $message->addBcc($message->getFrom()->current());
+        if (getenv('MAIL_BCC_TO_SENDER_ENABLED')) {
+            $message->addBcc($message->getFrom()->current());
+        }
 
         // Add in extra attachments, if any from template variables
         if ($body instanceof \TextWithExtras
