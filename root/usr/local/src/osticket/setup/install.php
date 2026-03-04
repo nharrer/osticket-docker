@@ -176,6 +176,18 @@ elseif(!db_select_database($vars['dbname']) && !db_create_database($vars['dbname
    }
 }
 
+// Migrate database and tables to utf8mb4 if still using utf8/utf8mb3 (required for emoji support)
+$charsetRow = db_query("SELECT default_character_set_name FROM information_schema.SCHEMATA WHERE schema_name='" . db_real_escape($vars['dbname']) . "'", false);
+if ($charsetRow && ($currentCharset = db_result($charsetRow)) && $currentCharset !== 'utf8mb4') {
+    echo "Migrating database charset from {$currentCharset} to utf8mb4 (emoji support)...\n";
+    db_query("ALTER DATABASE `" . $vars['dbname'] . "` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci", false);
+    $tables = db_query("SELECT TABLE_NAME FROM information_schema.TABLES WHERE TABLE_SCHEMA='" . db_real_escape($vars['dbname']) . "' AND TABLE_TYPE='BASE TABLE'", false);
+    while ($table = db_fetch_row($tables)) {
+        db_query("ALTER TABLE `" . $table[0] . "` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci", false);
+    }
+    echo "Charset migration complete\n";
+}
+
 //Create secret if not set by env var and not previously stored
 DEFINE('SECRET_FILE','/var/lib/osticket/secret.txt');
 if (!$vars['siri']) {
