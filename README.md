@@ -6,13 +6,13 @@ Special Build
 
 This was based on  (now archived) with following changes:
 
-* Bumped version to osTicket v1.18.1.
+* Bumped version to osTicket v1.18.3.
 * Added `Dockerfile.debug` for building a debug version which enables php xdebug and extended logging.
 * Patched `class.mailer.php` to BCC the sender's own From address on all outgoing mails, so sent mail can be archived via a server-side mail filter. Enable by setting `MAIL_BCC_TO_SENDER_ENABLED=1`.
 
 # Introduction
 
-Docker image for running version 1.18.1 of [osTicket](http://osticket.com/).
+Docker image for running version 1.18.3 of [osTicket](http://osticket.com/).
 
 This image is based on the works of [CampbellSoftwareSolutions](https://github.com/CampbellSoftwareSolutions/docker-osticket) and Petter A. Helset
 
@@ -27,7 +27,7 @@ It has a few modifications:
   * EMail support
 
 osTicket is being served by [nginx](http://wiki.nginx.org/Main) using
-[PHP-FPM](http://php-fpm.org/) with PHP 8.2.
+[PHP-FPM](http://php-fpm.org/) with PHP 8.4.
 PHP [mail](http://php.net/manual/en/function.mail.php) function is configured to use
 [msmtp](http://msmtp.sourceforge.net/) to send out-going messages.
 
@@ -42,7 +42,7 @@ docker run -d \
     -e MYSQL_PASSWORD=secret \
     -e MYSQL_DATABASE=osticket \
     --name osticket_mysql\
-    mysql:5
+    mysql:8
 ```
 
 Now run this image and link the MySQL container.
