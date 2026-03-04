@@ -106,16 +106,6 @@ RUN set -ex; \
         # (e.g. due to a checksum mismatch)
         php -r "new Phar(\"${phar}\");"; \
     done
-ENV OSTICKET_SLACK_VERSION=de1d9a276a64520eea6e6368e609a0f4c4829d96 \
-    OSTICKET_SLACK_SHA256SUM=8d06500fd5b8a589a5f7103c242160086ca1696a5b93d0e3767119a54059532b
-RUN set -ex; \
-    \
-    wget -q -O osTicket-slack-plugin.tar.gz https://github.com/devinsolutions/\
-osTicket-slack-plugin/archive/${OSTICKET_SLACK_VERSION}.tar.gz; \
-    echo "${OSTICKET_SLACK_SHA256SUM}  osTicket-slack-plugin.tar.gz" | sha256sum -c; \
-    tar -xzf osTicket-slack-plugin.tar.gz -C /var/www/html/include/plugins --strip-components 1 \
-        osTicket-slack-plugin-${OSTICKET_SLACK_VERSION}/slack; \
-    rm osTicket-slack-plugin.tar.gz
 COPY root /
 ENV ENV=/etc/profile
 CMD ["start"]

@@ -1,7 +1,4 @@
 <?php
-// (C) Campbell Software Solutions 2015
-// Portions (C) 2006-2015 osTicket
-
 //Configure settings from environmental variables
 $_SERVER['HTTP_ACCEPT_LANGUAGE'] = getenv("LANGUAGE") ?: "en-us";
 
