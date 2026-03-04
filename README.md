@@ -243,6 +243,15 @@ User name to use for automatically created administrative user. Defaults to 'ost
 
 Password to use for automatically created administrative user. Defaults to 'Admin1'.
 
+# Language Packs
+
+osTicket ships with English (`en`) built in. This image additionally bundles the German (`de`)
+language pack. To change which language packs are included, edit the `for lang in ...` loop in
+the `Dockerfile` — a commented-out line with all available packs is provided there for reference.
+
+Note: language packs are downloaded from the official osTicket CDN on S3, but cannot be
+authenticated (see [osTicket#6377](https://github.com/osTicket/osTicket/issues/6377)).
+
 # Modifications
 
 This image was put together relatively quickly and could probably be improved to meet other use

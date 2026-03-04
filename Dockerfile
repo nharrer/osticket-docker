@@ -85,10 +85,15 @@ v${OSTICKET_VERSION}/osTicket-v${OSTICKET_VERSION}.zip; \
     \
     cd /var/www/html; \
     \
+    # Language packs from https://s3.amazonaws.com/downloads.osticket.com/lang/1.18.x/ (used by
+    # the official osTicket Downloads page) cannot be authenticated. See:
+    # https://github.com/osTicket/osTicket/issues/6377
+    # Currently only 'de' is bundled on top of the built-in 'en'. To include all available language
+    # packs, replace the line below with the commented-out alternative.
     for lang in de; do \
-        # Language packs from https://s3.amazonaws.com/downloads.osticket.com/lang/1.17.x/ (used by
-        # the official osTicket Downloads page) cannot be authenticated. See:
-        # https://github.com/osTicket/osTicket/issues/6377
+    # for lang in ar az bg bn bs ca cs da de el en_GB es_AR es_ES es_MX et eu fa fi fil fr gl he hi \
+    #             hr hu id is it ja ka km ko lt lv mk mn ms nl no pl ps pt_PT ro ru sk sl sq sr \
+    #             sr_CS sv_SE sw th tr uk ur_IN ur_PK vi zh_CN zh_TW; do \
         wget -q -O /var/www/html/include/i18n/${lang}.phar \
             https://s3.amazonaws.com/downloads.osticket.com/lang/1.18.x/${lang}.phar; \
         php /tmp/verify-plugin.php "/var/www/html/include/i18n/${lang}.phar"; \
