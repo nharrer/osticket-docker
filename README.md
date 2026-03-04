@@ -42,7 +42,7 @@ docker run -d \
     -e MYSQL_PASSWORD=secret \
     -e MYSQL_DATABASE=osticket \
     --name osticket_mysql\
-    mysql:8
+    mysql:8.4
 ```
 
 Now run this image and link the MySQL container.
