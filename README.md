@@ -1,10 +1,6 @@
 osticket-docker
 ===============
 
-Special Build
-=============
-
-
 # Introduction
 
 Docker image for running [osTicket](http://osticket.com/).
@@ -171,6 +167,11 @@ specified. Defaults to no value.
 
 The password associated with the user for SMTP authentication. Defaults to no value.
 
+`MAIL_BCC_TO_SENDER_ENABLED`
+
+Set to `1` to BCC the envelope From address on every outgoing email. This allows sent mail to be
+archived server-side via a mail filter (e.g. maildrop). Disabled by default.
+
 ## IMAP/POP3 Settings
 
 `CRON_INTERVAL`
@@ -246,17 +247,11 @@ Password to use for automatically created administrative user. Defaults to 'Admi
 
 osTicket ships with English (`en`) built in. This image additionally bundles the German (`de`)
 language pack. To change which language packs are included, edit the `for lang in ...` loop in
-the `Dockerfile` — a commented-out line with all available packs is provided there for reference.
-
-# Modifications
-
-This image was put together relatively quickly and could probably be improved to meet other use
-cases.
-
-Please feel free to open an issue if you have any changes you would like to see. All pull requests
-are also appreciated!
+the `Dockerfile`. A commented-out line with all available packs is provided there for reference.
 
 # License
 
 This image and source code is made available under the MIT licence. See the LICENSE file for
 details.
+
+osTicket itself is licensed under the [GNU General Public License v2.0](https://github.com/osTicket/osTicket/blob/develop/LICENSE.md).
