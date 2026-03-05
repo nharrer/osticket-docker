@@ -15,6 +15,7 @@ It has a few modifications:
   * Added `Dockerfile.debug` for building a debug version which enables php xdebug and extended logging.
   * Patched `class.mailer.php` to BCC the sender's own From address on all outgoing mails, so sent mail can be archived via a server-side mail filter. Enable by setting `MAIL_BCC_TO_SENDER_ENABLED=1`.
   * Patched `mysqli.php` to use `utf8mb4` instead of `utf8` for the database connection, so emojis are stored correctly. This is an upstream bug ([osTicket#1475](https://github.com/osTicket/osTicket/issues/1475)) that will not be fixed before osTicket 2.0.
+  * Patched `class.format.php` to disable `strip_emoticons()`, which upstream used to strip all emoji before DB writes. With utf8mb4 support in place, this function is now a no-op.
   * On every container start, `install.php` automatically migrates the MySQL user to `caching_sha2_password` (required by MySQL 8.0+) and converts all database tables to `utf8mb4` if not already done.
 
 osTicket is being served by [nginx](http://wiki.nginx.org/Main) using
