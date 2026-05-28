@@ -479,6 +479,9 @@ class Format {
         // make urls clickable.
         $text = Format::clickableurls($text);
 
+        // make ticket references (Ticket #NNNNN) clickable.
+        $text = Format::ticketlinks($text);
+
         if ($inline_images)
             return self::viewableImages($text);
 
@@ -526,6 +529,31 @@ class Format {
     // No-op: emoji are supported via utf8mb4 (patched)
     static function strip_emoticons($text) {
         return $text;
+    }
+
+    static function ticketlinks($text) {
+        global $thisstaff;
+        return preg_replace_callback(
+            ':^[^<]+|>[^<]+:',
+            function($match) use ($thisstaff) {
+                return preg_replace_callback(
+                    '/(?<!["\'])Ticket #(\d+)\b/',
+                    function($m) use ($thisstaff) {
+                        $ticket = Ticket::lookupByNumber($m[1]);
+                        if (!$ticket)
+                            return $m[0];
+                        $id = $ticket->getId();
+                        if ($thisstaff)
+                            $url = ROOT_PATH . 'scp/tickets.php?id=' . $id;
+                        else
+                            $url = ROOT_PATH . 'tickets.php?id=' . $id;
+                        return sprintf('<a href="%s">Ticket #%s</a>', $url, $m[1]);
+                    },
+                    $match[0]
+                );
+            },
+            $text
+        );
     }
 
     // Insert </br> tag inside empty <p> tags to ensure proper editor spacing
