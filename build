@@ -1,1 +1,1 @@
-docker build -t nharrer/osticket:1.18.3 -f Dockerfile .
+docker build -t nharrer/osticket:1.18.4 -f Dockerfile .

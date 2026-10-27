@@ -9,7 +9,8 @@ This image is based on the works of [CampbellSoftwareSolutions](https://github.c
 
 It has a few modifications:
 
-  * Bumped version to osTicket v1.18.3.
+  * Bumped version to osTicket v1.18.4.
+  * Bumped PHP to 8.4.27 (base image `php:8.4-fpm-alpine3.24`). `session.upload_progress.enabled` is turned off.
   * Automates configuration file & database installation
   * EMail support
   * Added `Dockerfile.debug` for building a debug version which enables php xdebug and extended logging.
