@@ -1,6 +1,6 @@
 services:
   osticket:
-    image: nharrer/osticket:1.18.4
+    image: nharrer/osticket:1.18.4-1
     restart: unless-stopped
     ports:
       - "8200:80"
