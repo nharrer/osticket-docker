@@ -1,0 +1,19 @@
+Adds the From address as BCC to every outgoing mail when
+MAIL_BCC_TO_SENDER_ENABLED is set, so a server-side mail filter can file
+sent mail into the Sent folder.
+
+--- a/include/class.mailer.php
++++ b/include/class.mailer.php
+@@ -493,6 +493,12 @@
+             }
+         }
+ 
++        // NH: Adding Bcc to myself. This works in concert with a mailfilter on
++        // stargate, which moves mails from ostickt to the Sent folder.
++        if (getenv('MAIL_BCC_TO_SENDER_ENABLED')) {
++            $message->addBcc($message->getFrom()->current());
++        }
++
+         // Add in extra attachments, if any from template variables
+         if ($body instanceof \TextWithExtras
+             && ($attachments = $body->getAttachments())) {

@@ -21,6 +21,8 @@ It has a few modifications:
   * Patched `js/redactor-osticket.js` to pass the CSRF token via Redactor's `imageData` option instead of the unknown `imageUploadData`. Without it, osTicket 1.18.4 rejects pasted and uploaded inline images with HTTP 400 ("Valid CSRF Token Required") and the editor shows a broken image ([osTicket#6961](https://github.com/osTicket/osTicket/issues/6961), fix from [osTicket#6932](https://github.com/osTicket/osTicket/pull/6932)).
   * On every container start, `install.php` automatically migrates the MySQL user to `caching_sha2_password` (required by MySQL 8.0+) and converts all database tables to `utf8mb4` if not already done.
 
+All changes to osTicket's own source files are kept as small patches in [`patches/`](patches/) and applied during the build. The build fails if a patch no longer applies cleanly (see [`patches/README.md`](patches/README.md)).
+
 osTicket is being served by [nginx](http://wiki.nginx.org/Main) using
 [PHP-FPM](http://php-fpm.org/) with PHP 8.4.
 PHP [mail](http://php.net/manual/en/function.mail.php) function is configured to use

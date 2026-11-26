@@ -68,6 +68,7 @@ RUN set -ex; \
 ENV OSTICKET_VERSION=1.18.4 \
     OSTICKET_SHA256SUM=a4187df5f52dd41625e6b61b322245853542e12b5969a45f0a6d81f7ab8151a7
 RUN --mount=type=bind,source=utils/verify-plugin.php,target=/tmp/verify-plugin.php,readonly \
+    --mount=type=bind,source=patches,target=/tmp/patches,readonly \
     \
     set -ex; \
     \
@@ -82,6 +83,15 @@ v${OSTICKET_VERSION}/osTicket-v${OSTICKET_VERSION}.zip; \
     cp -al /usr/local/src/osticket/. /var/www/html; \
     # Hide setup
     rm -r /var/www/html/setup; \
+    \
+    # Apply our patches (see patches/README.md). --fuzz=0 fails the build if the code
+    # around a patch changed upstream, --forward fails it if upstream already contains
+    # the change (then drop that patch).
+    apk add --no-cache --virtual .patch-deps patch; \
+    for p in /tmp/patches/*.patch; do \
+        patch -d /var/www/html -p1 --forward --fuzz=0 --no-backup-if-mismatch < "$p"; \
+    done; \
+    apk del .patch-deps; \
     \
     cd /var/www/html; \
     \

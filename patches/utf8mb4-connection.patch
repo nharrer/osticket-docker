@@ -1,0 +1,35 @@
+Uses utf8mb4 instead of utf8 for the database connection and for
+db_create_database(), so emoji are not dropped on save.
+Upstream: https://github.com/osTicket/osTicket/issues/1475 (won't fix before 2.0).
+
+--- a/include/mysqli.php
++++ b/include/mysqli.php
+@@ -74,13 +74,13 @@
+ 
+     //set desired encoding just in case mysql charset is not UTF-8 - Thanks to FreshMedia
+     @db_set_all(array(
+-        'NAMES'                 => 'utf8',
+-        'CHARACTER SET'         => 'utf8',
+-        'COLLATION_CONNECTION'  => 'utf8_general_ci',
++        'NAMES'                 => 'utf8mb4',
++        'CHARACTER SET'         => 'utf8mb4',
++        'COLLATION_CONNECTION'  => 'utf8mb4_unicode_ci',
+         'SQL_MODE'              => '',
+         'TIME_ZONE'             => 'SYSTEM',
+     ), 'session');
+-    $__db->set_charset('utf8');
++    $__db->set_charset('utf8mb4');
+ 
+     $__db->autocommit(true);
+ 
+@@ -163,8 +163,8 @@
+     return ($database && @$__db->select_db($database));
+ }
+ 
+-function db_create_database($database, $charset='utf8',
+-        $collate='utf8_general_ci') {
++function db_create_database($database, $charset='utf8mb4',
++        $collate='utf8mb4_unicode_ci') {
+     global $__db;
+     return @$__db->query(
+         sprintf('CREATE DATABASE %s DEFAULT CHARACTER SET %s COLLATE %s',

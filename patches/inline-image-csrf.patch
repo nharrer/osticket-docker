@@ -1,0 +1,21 @@
+Passes the CSRF token as Redactor option 'imageData' instead of the ignored
+'imageUploadData'. Otherwise osTicket 1.18.4 rejects pasted and uploaded inline
+images with HTTP 400 "Valid CSRF Token Required" and the editor shows a broken
+image. Drop once upstream ships the fix (the build fails with --forward then).
+Upstream: https://github.com/osTicket/osTicket/issues/6961,
+fix https://github.com/osTicket/osTicket/pull/6932.
+
+--- a/js/redactor-osticket.js
++++ b/js/redactor-osticket.js
+@@ -386,7 +386,10 @@
+                 'imageCaption': false,
+                 'imageManagerJson': 'ajax.php/draft/images/browse',
+                 'imagePosition': true,
+-                'imageUploadData': {
++                // NH: Redactor only knows 'imageData'. With 'imageUploadData' the CSRF token is
++                // missing on inline image uploads and osTicket 1.18.4 rejects them with HTTP 400.
++                // Upstream: https://github.com/osTicket/osTicket/pull/6932
++                'imageData': {
+                     '__CSRFToken__': $("meta[name=csrf_token]").attr("content")
+                 },
+                 'imageResizable': true,
